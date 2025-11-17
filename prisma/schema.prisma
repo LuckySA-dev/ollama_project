@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum BehaviorType {
+  STUDY_TIME
+  PROCRASTINATION
+  STRESS
+  MOTIVATION
+  FOCUS
+  BURNOUT
+}
+
+enum ReportType {
+  WEEKLY
+  MONTHLY
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student Student?
+  teacher Teacher?
+
+  @@map("users")
+}
+
+model Student {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  gradeLevel Int // 7, 8, or 9
+  teacherId  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teacher            Teacher?             @relation(fields: [teacherId], references: [id])
+  chatSessions       ChatSession[]
+  behaviorLogs       StudyBehaviorLog[]
+  behaviorScores     BehaviorScore[]
+  reportHistory      ReportHistory[]
+
+  @@map("students")
+}
+
+model Teacher {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students Student[]
+
+  @@map("teachers")
+}
+
+model ChatSession {
+  id             String    @id @default(uuid())
+  studentId      String
+  startedAt      DateTime  @default(now())
+  endedAt        DateTime?
+  sessionSummary String?   @db.Text
+
+  // Relations
+  student  Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@map("chat_sessions")
+}
+
+model Message {
+  id            String   @id @default(uuid())
+  sessionId     String
+  role          String // "user" or "assistant"
+  content       String   @db.Text
+  behaviorTags  Json?    // Array of extracted behaviors
+  timestamp     DateTime @default(now())
+
+  // Relations
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model StudyBehaviorLog {
+  id           String       @id @default(uuid())
+  studentId    String
+  behaviorType BehaviorType
+  intensity    Int // 1-10 scale
+  context      String?      @db.Text
+  loggedAt     DateTime     @default(now())
+
+  // Relations
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("study_behavior_logs")
+}
+
+model BehaviorScore {
+  id               String   @id @default(uuid())
+  studentId        String
+  weekStartDate    DateTime
+  focusScore       Int      @default(0) // 0-100
+  consistencyScore Int      @default(0) // 0-100
+  motivationScore  Int      @default(0) // 0-100
+  stressLevel      Int      @default(0) // 0-100
+  createdAt        DateTime @default(now())
+
+  // Relations
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, weekStartDate])
+  @@map("behavior_scores")
+}
+
+model ReportHistory {
+  id                  String     @id @default(uuid())
+  studentId           String
+  reportType          ReportType
+  generatedAt         DateTime   @default(now())
+  content             Json // Structured report data
+  aiRecommendations   String     @db.Text
+  weekStartDate       DateTime?
+  monthStartDate      DateTime?
+
+  // Relations
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("report_history")
+}
