@@ -70,16 +70,21 @@ export default function ChatInterface({ sessionId, onMessageSent }: ChatInterfac
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+    const messageContent = input.trim();
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
-      content: input,
+      content: messageContent,
       timestamp: new Date(),
     };
 
+    // เพิ่มข้อความของ user ทันที
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    
+    // Scroll ลงล่างทันที
+    setTimeout(() => scrollToBottom(), 100);
 
     try {
       // Get token from localStorage
@@ -118,8 +123,12 @@ export default function ChatInterface({ sessionId, onMessageSent }: ChatInterfac
           content: data.data.response,
           timestamp: new Date(),
         };
+        // เพิ่มข้อความของ AI ทันที
         setMessages((prev) => [...prev, aiMessage]);
-        onMessageSent?.(input);
+        onMessageSent?.(messageContent);
+        
+        // Scroll ลงล่างเมื่อได้คำตอบ
+        setTimeout(() => scrollToBottom(), 100);
       } else {
         // Show error message to user
         const errorMessage: ChatMessage = {
@@ -202,18 +211,33 @@ export default function ChatInterface({ sessionId, onMessageSent }: ChatInterfac
             </div>
           </div>
         ) : (
-          messages.map((message) => (
-            <MessageBubble key={message.id} message={message} />
-          ))
+          <div className="space-y-4">
+            {messages.map((message, index) => (
+              <div 
+                key={message.id} 
+                className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <MessageBubble message={message} />
+              </div>
+            ))}
+          </div>
         )}
         {isLoading && (
-          <div className="flex items-center space-x-2 px-4">
-            <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <div className="flex items-start space-x-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <span className="text-xl">🤖</span>
             </div>
-            <span className="text-sm text-muted-foreground">AI กำลังตอบ...</span>
+            <div className="flex-1 bg-card border rounded-2xl rounded-tl-none p-4 shadow-sm">
+              <div className="flex items-center space-x-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+                <span className="text-sm text-muted-foreground">กำลังคิด...</span>
+              </div>
+            </div>
           </div>
         )}
         <div ref={messagesEndRef} />

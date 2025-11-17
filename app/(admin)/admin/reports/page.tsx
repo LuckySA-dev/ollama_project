@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import AdminNavbar from "@/components/layout/AdminNavbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, TrendingUp, Calendar, Users, MessageSquare } from "lucide-react";
+import { FileText, Download, TrendingUp, Calendar, Users, MessageSquare, BarChart3, RefreshCw } from "lucide-react";
+import { downloadStatisticsReport } from "@/lib/pdf/reportGenerator";
 
 interface SystemReport {
   totalUsers: number;
@@ -59,6 +60,20 @@ export default function AdminReportsPage() {
     }
   };
 
+  const handleExportPDF = () => {
+    if (!report) {
+      alert("ไม่มีข้อมูลสำหรับสร้างรายงาน");
+      return;
+    }
+    
+    try {
+      downloadStatisticsReport(report);
+    } catch (error) {
+      console.error("PDF export error:", error);
+      alert("เกิดข้อผิดพลาดในการสร้าง PDF");
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("auth-token");
     if (!token) {
@@ -109,20 +124,35 @@ export default function AdminReportsPage() {
       <AdminNavbar />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">รายงานระบบ</h1>
-            <p className="text-muted-foreground text-lg">สถิติและข้อมูลการใช้งานระบบ</p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  รายงานระบบ
+                </h1>
+                <p className="text-muted-foreground">สถิติและข้อมูลการใช้งานระบบ</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" className="gap-2" onClick={fetchReport}>
+                <RefreshCw className="h-4 w-4" />
+                รีเฟรช
+              </Button>
+              <Button className="gap-2" onClick={() => handleExport("users")}>
+                <Download className="h-4 w-4" />
+                ดาวน์โหลด
+              </Button>
+            </div>
           </div>
-          <Button className="gap-2" onClick={() => handleExport("users")}>
-            <Download className="h-4 w-4" />
-            ดาวน์โหลดรายงาน
-          </Button>
         </div>
 
         {/* Overview Stats */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="border-2 hover:border-primary/50 transition-all">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 ผู้ใช้ทั้งหมด
@@ -132,7 +162,7 @@ export default function AdminReportsPage() {
             <CardContent>
               <div className="text-3xl font-bold">{report?.totalUsers || 0}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                +{report?.weeklyGrowth.users || 0} สัปดาห์นี้
+                +{report?.weeklyGrowth?.users || 0} สัปดาห์นี้
               </p>
             </CardContent>
           </Card>
@@ -147,7 +177,7 @@ export default function AdminReportsPage() {
             <CardContent>
               <div className="text-3xl font-bold">{report?.totalSessions || 0}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                +{report?.weeklyGrowth.sessions || 0} สัปดาห์นี้
+                +{report?.weeklyGrowth?.sessions || 0} สัปดาห์นี้
               </p>
             </CardContent>
           </Card>
@@ -260,7 +290,7 @@ export default function AdminReportsPage() {
                 <MessageSquare className="h-4 w-4" />
                 รายงานการสนทนา (CSV)
               </Button>
-              <Button variant="outline" className="gap-2" disabled title="Coming soon">
+              <Button variant="outline" className="gap-2" onClick={handleExportPDF}>
                 <TrendingUp className="h-4 w-4" />
                 รายงานสถิติ (PDF)
               </Button>

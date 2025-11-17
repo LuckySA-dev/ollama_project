@@ -8,7 +8,7 @@ import BehaviorChart from "@/components/dashboard/BehaviorChart";
 import StudentNavbar from "@/components/layout/StudentNavbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, TrendingUp, Award, Flame, FileText, ArrowRight, Sparkles } from "lucide-react";
+import { MessageSquare, TrendingUp, Award, Flame, FileText, ArrowRight, Sparkles, Brain, Target, Calendar } from "lucide-react";
 import type { DashboardStats } from "@/types";
 
 export default function StudentDashboard() {
@@ -70,39 +70,96 @@ export default function StudentDashboard() {
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <h2 className="text-3xl font-bold">ยินดีต้อนรับกลับมา!</h2>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                ยินดีต้อนรับกลับมา!
+              </h2>
+              <p className="text-muted-foreground">พร้อมเรียนรู้และพัฒนาตัวเองวันนี้หรือยัง?</p>
+            </div>
           </div>
-          <p className="text-muted-foreground text-lg">นี่คือสรุปพฤติกรรมการเรียนของคุณในสัปดาห์นี้</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Total Sessions"
-            value={stats?.totalSessions || 0}
-            description="All-time chat sessions"
-            icon={MessageSquare}
-          />
-          <StatsCard
-            title="Focus Score"
-            value={stats?.weeklyScore?.focusScore || "N/A"}
-            description="This week's average"
-            icon={TrendingUp}
-          />
-          <StatsCard
-            title="Motivation"
-            value={stats?.weeklyScore?.motivationScore || "N/A"}
-            description="Keep it up!"
-            icon={Award}
-          />
-          <StatsCard
-            title="Study Streak"
-            value={`${stats?.streakDays || 0} days`}
-            description="Consecutive days"
-            icon={Flame}
-          />
+          <Card className="border-2 hover:border-primary/50 transition-all">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                  <MessageSquare className="h-6 w-6 text-blue-500" />
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold">{stats?.totalSessions || 0}</div>
+                  <div className="text-xs text-muted-foreground">+{stats?.weeklySessions || 0} สัปดาห์นี้</div>
+                </div>
+              </div>
+              <div className="text-sm font-medium">การสนทนาทั้งหมด</div>
+              <div className="text-xs text-muted-foreground">เซสชันที่คุณสร้าง</div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 hover:border-primary/50 transition-all cursor-pointer" onClick={() => router.push('/student/progress')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-green-500" />
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold">
+                    {stats?.weeklyScore?.focusScore ? Math.round(stats.weeklyScore.focusScore) : "--"}
+                  </div>
+                  <div className="text-xs text-muted-foreground">คะแนน</div>
+                </div>
+              </div>
+              <div className="text-sm font-medium">สมาธิในการเรียน</div>
+              <div className="text-xs text-muted-foreground">
+                {stats?.weeklyScore?.focusScore 
+                  ? `${Math.round(stats.weeklyScore.focusScore)}/100 สัปดาห์นี้`
+                  : "ยังไม่มีข้อมูล"}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 hover:border-primary/50 transition-all cursor-pointer" onClick={() => router.push('/student/progress')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                  <Target className="h-6 w-6 text-purple-500" />
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold">
+                    {stats?.weeklyScore?.motivationScore ? Math.round(stats.weeklyScore.motivationScore) : "--"}
+                  </div>
+                  <div className="text-xs text-muted-foreground">คะแนน</div>
+                </div>
+              </div>
+              <div className="text-sm font-medium">แรงจูงใจ</div>
+              <div className="text-xs text-muted-foreground">
+                {stats?.weeklyScore?.motivationScore 
+                  ? `${Math.round(stats.weeklyScore.motivationScore)}/100 ${stats.weeklyScore.motivationScore >= 70 ? 'ทำได้ดีมาก!' : 'ต้องพัฒนา'}`
+                  : "ยังไม่มีข้อมูล"}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 hover:border-primary/50 transition-all bg-gradient-to-br from-orange-500/5 to-red-500/5">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center">
+                  <Flame className="h-6 w-6 text-orange-500" />
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-orange-500">{stats?.streakDays || 0}</div>
+                  <div className="text-xs text-muted-foreground">วัน</div>
+                </div>
+              </div>
+              <div className="text-sm font-medium">ติดต่อกัน</div>
+              <div className="text-xs text-muted-foreground">เรียนรู้ทุกวัน 🔥</div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Chart */}
@@ -121,10 +178,55 @@ export default function StudentDashboard() {
           </div>
         )}
 
+        {/* Recent Activity */}
+        {stats?.recentBehaviors && stats.recentBehaviors.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                กิจกรรมล่าสุด
+              </CardTitle>
+              <CardDescription>พฤติกรรมการเรียนที่บันทึกไว้</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {stats.recentBehaviors.slice(0, 3).map((behavior: any) => (
+                  <div key={behavior.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2" />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-sm">{behavior.behaviorType}</span>
+                        <span className="text-xs text-muted-foreground">
+                          ความเข้มข้น: {behavior.intensity}/10
+                        </span>
+                      </div>
+                      {behavior.context && (
+                        <p className="text-sm text-muted-foreground">{behavior.context}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(behavior.loggedAt).toLocaleDateString('th-TH', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Quick Actions */}
         <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4">การดำเนินการด่วน</h3>
-          <div className="grid md:grid-cols-3 gap-4">
+          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <ArrowRight className="h-5 w-5 text-primary" />
+            เริ่มต้นใช้งาน
+          </h3>
+          <div className="grid md:grid-cols-2 gap-4">
             <Link href="/student/chat">
               <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group">
                 <CardHeader>
@@ -137,23 +239,6 @@ export default function StudentDashboard() {
                   <CardTitle className="text-lg">เริ่มการสนทนา</CardTitle>
                   <CardDescription>
                     พูดคุยกับ AI Mentor เกี่ยวกับปัญหาการเรียนของคุณ
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-
-            <Link href="/student/reports">
-              <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <FileText className="h-6 w-6 text-primary" />
-                    </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <CardTitle className="text-lg">ดูรายงาน</CardTitle>
-                  <CardDescription>
-                    ตรวจสอบรายงานความก้าวหน้าและคำแนะนำ
                   </CardDescription>
                 </CardHeader>
               </Card>

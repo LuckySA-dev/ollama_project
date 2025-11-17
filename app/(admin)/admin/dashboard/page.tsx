@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminNavbar from "@/components/layout/AdminNavbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, GraduationCap, MessageSquare, FileText, TrendingUp, Activity } from "lucide-react";
+import { Users, GraduationCap, MessageSquare, FileText, TrendingUp, Activity, ArrowRight, BarChart3 } from "lucide-react";
+import Link from "next/link";
 
 interface AdminStats {
   totalStudents: number;
@@ -71,13 +72,22 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">แดชบอร์ดผู้ดูแลระบบ</h1>
-        <p className="text-muted-foreground text-lg">ภาพรวมของระบบ StudyBuddy</p>
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+            <BarChart3 className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              แดชบอร์ดผู้ดูแลระบบ
+            </h1>
+            <p className="text-muted-foreground">ภาพรวมของระบบ StudyBuddy</p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+        <Card className="border-2 hover:border-primary/50 transition-all hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               นักเรียนทั้งหมด
@@ -156,30 +166,63 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>การจัดการผู้ใช้</CardTitle>
-            <CardDescription>จัดการบัญชีนักเรียนและผู้ดูแลระบบ</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              ดูรายชื่อผู้ใช้ทั้งหมด แก้ไขข้อมูล และจัดการสิทธิ์การเข้าถึง
-            </p>
-          </CardContent>
-        </Card>
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <ArrowRight className="h-5 w-5 text-primary" />
+          การจัดการระบบ
+        </h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          <Link href="/admin/users">
+            <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group h-full">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                    <Users className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <CardTitle className="text-lg">จัดการผู้ใช้</CardTitle>
+                <CardDescription>
+                  ดูและแก้ไขข้อมูลผู้ใช้ทั้งหมด
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>รายงานระบบ</CardTitle>
-            <CardDescription>ดูสถิติและรายงานโดยรวม</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              วิเคราะห์การใช้งานระบบ ประสิทธิภาพ และแนวโน้มการเรียนรู้
-            </p>
-          </CardContent>
-        </Card>
+          <Link href="/admin/reports">
+            <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group h-full">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                    <FileText className="h-6 w-6 text-green-500" />
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <CardTitle className="text-lg">รายงานระบบ</CardTitle>
+                <CardDescription>
+                  ดูสถิติและวิเคราะห์การใช้งาน
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/users">
+            <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group h-full">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                    <TrendingUp className="h-6 w-6 text-purple-500" />
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <CardTitle className="text-lg">สร้างผู้ใช้ใหม่</CardTitle>
+                <CardDescription>
+                  เพิ่มนักเรียนหรือผู้ดูแลระบบ
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        </div>
       </div>
       </div>
     </div>

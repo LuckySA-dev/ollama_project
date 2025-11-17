@@ -59,23 +59,21 @@ export async function GET(request: Request) {
       },
     });
 
-    // Fetch chat sessions for activity tracking
+    // Fetch all chat sessions with full details
     const sessions = await prisma.chatSession.findMany({
       where: {
         studentId: user.studentId,
-        startedAt: {
-          gte: startDate,
-        },
       },
       include: {
         messages: {
           select: {
             id: true,
+            behaviorTags: true,
           },
         },
       },
       orderBy: {
-        startedAt: "asc",
+        startedAt: "desc",
       },
     });
 
@@ -116,26 +114,86 @@ export async function GET(request: Request) {
       consistency: latestScore.consistencyScore - previousScore.consistencyScore,
     } : null;
 
-    // Calculate behavior distribution
-    const behaviorDistribution: Record<string, number> = {};
+    // Calculate behavior statistics
+    const behaviorStats: Record<string, { count: number; totalIntensity: number }> = {};
     behaviorLogs.forEach((log: any) => {
-      behaviorDistribution[log.behaviorType] = (behaviorDistribution[log.behaviorType] || 0) + 1;
+      if (!behaviorStats[log.behaviorType]) {
+        behaviorStats[log.behaviorType] = { count: 0, totalIntensity: 0 };
+      }
+      behaviorStats[log.behaviorType].count++;
+      behaviorStats[log.behaviorType].totalIntensity += log.intensity;
     });
+
+    const behaviorStatsArray = Object.entries(behaviorStats).map(([behaviorType, stats]) => ({
+      behaviorType,
+      count: stats.count,
+      averageIntensity: stats.totalIntensity / stats.count,
+    }));
+
+    // Extract all behavior tags from messages
+    const allBehaviorTags = new Set<string>();
+    sessions.forEach((session: any) => {
+      session.messages.forEach((msg: any) => {
+        if (msg.behaviorTags) {
+          try {
+            const tags = typeof msg.behaviorTags === 'string' 
+              ? JSON.parse(msg.behaviorTags) 
+              : msg.behaviorTags;
+            if (Array.isArray(tags)) {
+              tags.forEach((tag: string) => allBehaviorTags.add(tag));
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+      });
+    });
+
+    // Format chat sessions for display
+    const chatSessions = sessions.map((session: any) => {
+      const sessionTags = new Set<string>();
+      session.messages.forEach((msg: any) => {
+        if (msg.behaviorTags) {
+          try {
+            const tags = typeof msg.behaviorTags === 'string' 
+              ? JSON.parse(msg.behaviorTags) 
+              : msg.behaviorTags;
+            if (Array.isArray(tags)) {
+              tags.forEach((tag: string) => sessionTags.add(tag));
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+      });
+
+      return {
+        id: session.id,
+        startedAt: session.startedAt,
+        sessionSummary: session.sessionSummary,
+        messageCount: session.messages.length,
+        behaviorTags: Array.from(sessionTags),
+      };
+    });
+
+    // Format weekly scores
+    const weeklyScores = behaviorScores.map((score: any) => ({
+      weekStartDate: score.weekStartDate,
+      focusScore: score.focusScore,
+      motivationScore: score.motivationScore,
+      stressLevel: score.stressLevel,
+    }));
+
+    // Calculate total messages
+    const totalMessages = sessions.reduce((sum: number, s: any) => sum + s.messages.length, 0);
 
     return NextResponse.json({
       success: true,
       data: {
-        weeklyActivity,
-        trends,
-        behaviorDistribution,
-        totalSessions: sessions.length,
-        totalBehaviors: behaviorLogs.length,
-        currentScores: latestScore ? {
-          focus: latestScore.focusScore,
-          motivation: latestScore.motivationScore,
-          stress: latestScore.stressLevel,
-          consistency: latestScore.consistencyScore,
-        } : null,
+        chatSessions,
+        behaviorStats: behaviorStatsArray,
+        weeklyScores,
+        totalMessages,
       },
     });
   } catch (error) {

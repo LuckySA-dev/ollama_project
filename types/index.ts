@@ -61,6 +61,7 @@ export interface BehaviorTrend {
 
 export interface DashboardStats {
   totalSessions: number;
+  weeklySessions: number;
   weeklyScore: WeeklyScore | null;
   recentBehaviors: BehaviorLog[];
   streakDays: number;

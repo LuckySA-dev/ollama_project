@@ -83,7 +83,7 @@ export async function generateWeeklyReport(studentId: string): Promise<ReportCon
       consistency: currentScore?.consistencyScore || 50,
     },
   }, {
-    language: "th", // Use Thai language
+    language: "en", // Use English language
     gradeLevel: student.gradeLevel,
   });
 
@@ -119,15 +119,15 @@ export async function generateWeeklyReport(studentId: string): Promise<ReportCon
     console.error("Failed to generate AI insights:", error);
     console.error("Response was:", await ollamaClient.generate(aiPrompt).catch(() => "N/A"));
     
-    // Thai fallback messages
+    // English fallback messages
     aiInsights = {
-      summary: "ไม่สามารถสร้างรายงานอัตโนมัติได้ในขณะนี้ แต่คุณกำลังทำได้ดีแล้ว! ลองพูดคุยกับ AI Mentor บ่อยๆ เพื่อติดตามความก้าวหน้าของคุณ",
+      summary: "Unable to generate automated report at this time, but you're doing great! Try chatting with AI Mentor regularly to track your progress.",
       recommendations: [
-        "พูดคุยกับ AI Mentor อย่างสม่ำเสมอ",
-        "ตั้งเป้าหมายการเรียนที่ชัดเจน",
-        "จัดการเวลาให้มีประสิทธิภาพ"
+        "Chat with AI Mentor regularly",
+        "Set clear learning goals",
+        "Manage your time effectively"
       ],
-      highlight: "คุณกำลังใช้ระบบเพื่อพัฒนาตนเอง ซึ่งเป็นสิ่งที่ดีมาก!",
+      highlight: "You're using the system to improve yourself, which is excellent!",
       concerns: [],
     };
   }
