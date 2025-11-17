@@ -18,7 +18,6 @@ export async function POST(request: Request) {
       where: { email: validated.email },
       include: {
         student: true,
-        teacher: true,
       },
     });
 
@@ -55,7 +54,6 @@ export async function POST(request: Request) {
           name: user.name,
           role: user.role,
           studentId: user.student?.id,
-          teacherId: user.teacher?.id,
         },
       },
     });

@@ -29,16 +29,6 @@ export async function GET(request: Request) {
             email: true,
           },
         },
-        teacher: {
-          include: {
-            user: {
-              select: {
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -56,12 +46,6 @@ export async function GET(request: Request) {
         name: student.user.name,
         email: student.user.email,
         gradeLevel: student.gradeLevel,
-        teacher: student.teacher
-          ? {
-              name: student.teacher.user.name,
-              email: student.teacher.user.email,
-            }
-          : null,
       },
     });
   } catch (error) {

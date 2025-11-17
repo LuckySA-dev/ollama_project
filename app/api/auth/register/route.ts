@@ -2,14 +2,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { hashPassword, generateToken } from "@/lib/auth";
-import { Role } from "@prisma/client";
 
 const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(2),
-  role: z.enum(["STUDENT", "TEACHER"]).default("STUDENT"),
-  gradeLevel: z.number().min(7).max(9).optional(),
+  role: z.enum(["STUDENT", "ADMIN"]).optional(),
+  gradeLevel: z.number().min(7).max(12).optional(),
 });
 
 export async function POST(request: Request) {
@@ -32,29 +31,26 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await hashPassword(validated.password);
 
+    // Determine role (default to STUDENT for public registration)
+    const userRole = validated.role || "STUDENT";
+
     // Create user with role-specific data
     const user = await prisma.user.create({
       data: {
         email: validated.email,
         password: hashedPassword,
         name: validated.name,
-        role: validated.role as Role,
-        ...(validated.role === "STUDENT" && {
+        role: userRole,
+        ...(userRole === "STUDENT" && {
           student: {
             create: {
               gradeLevel: validated.gradeLevel || 7,
             },
           },
         }),
-        ...(validated.role === "TEACHER" && {
-          teacher: {
-            create: {},
-          },
-        }),
       },
       include: {
         student: true,
-        teacher: true,
       },
     });
 
@@ -75,7 +71,6 @@ export async function POST(request: Request) {
           name: user.name,
           role: user.role,
           studentId: user.student?.id,
-          teacherId: user.teacher?.id,
         },
       },
     });

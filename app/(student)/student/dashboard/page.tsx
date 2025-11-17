@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import StatsCard from "@/components/dashboard/StatsCard";
 import BehaviorChart from "@/components/dashboard/BehaviorChart";
+import StudentNavbar from "@/components/layout/StudentNavbar";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, TrendingUp, Award, Flame, FileText } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MessageSquare, TrendingUp, Award, Flame, FileText, ArrowRight, Sparkles } from "lucide-react";
 import type { DashboardStats } from "@/types";
 
 export default function StudentDashboard() {
@@ -45,37 +47,34 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="min-h-screen flex flex-col bg-background">
+        <StudentNavbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+            <p className="text-muted-foreground">กำลังโหลดข้อมูล...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-primary">StudyBuddy</h1>
-          <nav className="flex gap-4">
-            <Link href="/student/dashboard">
-              <Button variant="ghost">Dashboard</Button>
-            </Link>
-            <Link href="/student/chat">
-              <Button variant="ghost">Chat</Button>
-            </Link>
-            <Link href="/student/reports">
-              <Button variant="ghost">Reports</Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      {/* Navbar */}
+      <StudentNavbar />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome Back!</h2>
-          <p className="text-gray-600">Here's how your study habits are looking this week.</p>
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="h-6 w-6 text-primary" />
+            <h2 className="text-3xl font-bold">ยินดีต้อนรับกลับมา!</h2>
+          </div>
+          <p className="text-muted-foreground text-lg">นี่คือสรุปพฤติกรรมการเรียนของคุณในสัปดาห์นี้</p>
         </div>
 
         {/* Stats Grid */}
@@ -123,26 +122,60 @@ export default function StudentDashboard() {
         )}
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Link href="/student/chat">
-            <div className="bg-white p-6 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
-              <MessageSquare className="h-8 w-8 text-primary mb-3" />
-              <h3 className="text-xl font-semibold mb-2">Start a Chat</h3>
-              <p className="text-gray-600">
-                Talk to StudyBuddy about your study challenges or questions.
-              </p>
-            </div>
-          </Link>
+        <div className="mb-8">
+          <h3 className="text-xl font-semibold mb-4">การดำเนินการด่วน</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <Link href="/student/chat">
+              <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <MessageSquare className="h-6 w-6 text-primary" />
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <CardTitle className="text-lg">เริ่มการสนทนา</CardTitle>
+                  <CardDescription>
+                    พูดคุยกับ AI Mentor เกี่ยวกับปัญหาการเรียนของคุณ
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
 
-          <Link href="/student/reports">
-            <div className="bg-white p-6 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
-              <FileText className="h-8 w-8 text-primary mb-3" />
-              <h3 className="text-xl font-semibold mb-2">View Reports</h3>
-              <p className="text-gray-600">
-                Check your weekly progress reports and recommendations.
-              </p>
-            </div>
-          </Link>
+            <Link href="/student/reports">
+              <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <FileText className="h-6 w-6 text-primary" />
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <CardTitle className="text-lg">ดูรายงาน</CardTitle>
+                  <CardDescription>
+                    ตรวจสอบรายงานความก้าวหน้าและคำแนะนำ
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+
+            <Link href="/student/progress">
+              <Card className="hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <TrendingUp className="h-6 w-6 text-primary" />
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <CardTitle className="text-lg">ความก้าวหน้า</CardTitle>
+                  <CardDescription>
+                    ติดตามพฤติกรรมและแนวโน้มการเรียนของคุณ
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          </div>
         </div>
       </main>
     </div>

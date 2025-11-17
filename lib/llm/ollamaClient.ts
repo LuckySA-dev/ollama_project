@@ -51,18 +51,25 @@ export class OllamaClient {
     }
   }
 
-  async generate(prompt: string): Promise<string> {
+  async generate(prompt: string, options?: { format?: "json" }): Promise<string> {
     try {
+      const requestBody: any = {
+        model: this.model,
+        prompt,
+        stream: false,
+      };
+      
+      // Add format if specified (for JSON mode)
+      if (options?.format === "json") {
+        requestBody.format = "json";
+      }
+      
       const response = await fetch(`${this.baseUrl}/api/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: this.model,
-          prompt,
-          stream: false,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {

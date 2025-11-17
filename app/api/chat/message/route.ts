@@ -5,7 +5,6 @@ import { getUserFromToken, getTokenFromRequest } from "@/lib/auth";
 import { ollamaClient } from "@/lib/llm/ollamaClient";
 import { buildChatMessages, extractBehaviorTags } from "@/lib/llm/promptTemplate";
 import { checkInputSafety, sanitizeInput, checkOutputSafety, getFallbackResponse } from "@/lib/llm/safetyFilter";
-import { BehaviorType } from "@prisma/client";
 
 const messageSchema = z.object({
   message: z.string().min(1).max(1000),
@@ -28,6 +27,19 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: "Student account required" },
         { status: 403 }
+      );
+    }
+
+    // Fetch student's grade level for language support
+    const student = await prisma.student.findUnique({
+      where: { id: user.studentId },
+      select: { gradeLevel: true },
+    });
+
+    if (!student) {
+      return NextResponse.json(
+        { success: false, error: "Student not found" },
+        { status: 404 }
       );
     }
 
@@ -73,13 +85,17 @@ export async function POST(request: Request) {
       },
     });
 
-    // Build messages for LLM
+    // Build messages for LLM with Thai language support
     const messages = buildChatMessages(
       history.map((h: any) => ({
         role: h.role as "user" | "assistant",
         content: h.content,
       })),
-      sanitizedMessage
+      sanitizedMessage,
+      {
+        language: "th", // Use Thai language
+        gradeLevel: student.gradeLevel,
+      }
     );
 
     // Get AI response
@@ -96,8 +112,8 @@ export async function POST(request: Request) {
       aiResponse = "I'm having trouble right now. Could you try asking that again? 😊";
     }
 
-    // Extract behavior tags
-    const behaviorTags = extractBehaviorTags(sanitizedMessage, aiResponse);
+    // Extract behavior tags with Thai language support
+    const behaviorTags = extractBehaviorTags(sanitizedMessage, aiResponse, "th");
 
     // Save messages
     const userMessage = await prisma.message.create({
@@ -105,7 +121,7 @@ export async function POST(request: Request) {
         sessionId,
         role: "user",
         content: sanitizedMessage,
-        behaviorTags: behaviorTags.length > 0 ? behaviorTags : null,
+        behaviorTags: behaviorTags.length > 0 ? behaviorTags : [],
       },
     });
 
@@ -121,13 +137,13 @@ export async function POST(request: Request) {
     if (behaviorTags.length > 0) {
       const behaviorLogs = behaviorTags.map((tag) => ({
         studentId: user.studentId!,
-        behaviorType: tag.toUpperCase() as BehaviorType,
+        behaviorType: tag.toUpperCase(),
         intensity: 5, // Default intensity, can be improved with sentiment analysis
         context: sanitizedMessage.substring(0, 200),
       }));
 
       await prisma.studyBehaviorLog.createMany({
-        data: behaviorLogs,
+        data: behaviorLogs as any,
       });
     }
 

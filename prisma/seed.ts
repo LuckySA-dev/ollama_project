@@ -6,34 +6,27 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Starting database seed...");
 
-  // Create teacher user
-  const teacherPassword = await bcrypt.hash("teacher123", 10);
-  const teacherUser = await prisma.user.create({
+  // Create ADMIN demo user
+  const adminPassword = await bcrypt.hash("demo123", 10);
+  const adminUser = await prisma.user.create({
     data: {
-      email: "teacher@school.com",
-      password: teacherPassword,
-      name: "Ms. Johnson",
-      role: Role.TEACHER,
-      teacher: {
-        create: {},
-      },
-    },
-    include: {
-      teacher: true,
+      email: "admin@demo.com",
+      password: adminPassword,
+      name: "Admin Demo",
+      role: Role.ADMIN,
     },
   });
+  console.log("✅ Created admin:", adminUser.email, "(password: demo123)");
 
-  console.log("✅ Created teacher:", teacherUser.email);
-
-  // Create student users
+  // Create STUDENT demo users
   const students = [
-    { name: "Alex Chen", email: "alex@student.com", grade: 7 },
-    { name: "Maria Garcia", email: "maria@student.com", grade: 8 },
-    { name: "Jordan Smith", email: "jordan@student.com", grade: 9 },
+    { name: "สมชาย ใจดี", email: "student@demo.com", grade: 9 },
+    { name: "สมหญิง รักเรียน", email: "student2@demo.com", grade: 10 },
+    { name: "ณัฐพล ขยัน", email: "student3@demo.com", grade: 11 },
   ];
 
   for (const studentData of students) {
-    const studentPassword = await bcrypt.hash("student123", 10);
+    const studentPassword = await bcrypt.hash("demo123", 10);
     const user = await prisma.user.create({
       data: {
         email: studentData.email,
@@ -43,7 +36,6 @@ async function main() {
         student: {
           create: {
             gradeLevel: studentData.grade,
-            teacherId: teacherUser.teacher!.id,
           },
         },
       },
@@ -52,34 +44,34 @@ async function main() {
       },
     });
 
-    console.log(`✅ Created student: ${user.email} (Grade ${studentData.grade})`);
+    console.log(`✅ Created student: ${user.email} (Grade ${studentData.grade}, password: demo123)`);
 
     // Create sample chat session for first student
-    if (studentData.email === "alex@student.com") {
+    if (studentData.email === "student@demo.com") {
       const session = await prisma.chatSession.create({
         data: {
           studentId: user.student!.id,
-          sessionSummary: "Discussed time management and study techniques",
+          sessionSummary: "พูดคุยเรื่องการจัดการเวลาและเทคนิคการเรียน",
           messages: {
             create: [
               {
                 role: "user",
-                content: "I'm having trouble focusing on my homework after school.",
+                content: "หนูมีปัญหาเรื่องสมาธิตอนทำการบ้านหลังเลิกเรียนค่ะ ไม่รู้ทำยังไงดี",
                 behaviorTags: JSON.stringify(["focus", "procrastination"]),
               },
               {
                 role: "assistant",
                 content:
-                  "I understand that can be challenging! Let's work on this together. Can you tell me what usually distracts you when you try to do homework?",
+                  "เข้าใจเลยค่ะ หลายคนก็มีปัญหาแบบนี้เหมือนกัน มาลองแก้ไขด้วยกันนะคะ อยากรู้ว่าอะไรที่ทำให้เสียสมาธิบ้างคะ?",
               },
               {
                 role: "user",
-                content: "I usually check my phone or think about playing games.",
+                content: "ส่วนใหญ่จะเล่นโทรศัพท์ หรือไม่ก็คิดถึงเกมที่อยากเล่นค่ะ",
               },
               {
                 role: "assistant",
                 content:
-                  "That's really common! Here's a strategy: Try the Pomodoro Technique - work for 25 minutes, then take a 5-minute break. During work time, put your phone in another room. Would you like to try this today?",
+                  "เข้าใจค่ะ นี่เป็นเรื่องปกติมากเลย! ลองใช้เทคนิค Pomodoro ดูไหมคะ - ทำงาน 25 นาที พัก 5 นาที ระหว่างทำงานให้เอาโทรศัพท์ไปไว้ห้องอื่น ลองทำวันนี้ดูไหมคะ?",
               },
             ],
           },
@@ -93,13 +85,13 @@ async function main() {
             studentId: user.student!.id,
             behaviorType: "FOCUS",
             intensity: 4,
-            context: "Difficulty focusing after school",
+            context: "มีปัญหาเรื่องสมาธิหลังเลิกเรียน",
           },
           {
             studentId: user.student!.id,
             behaviorType: "PROCRASTINATION",
             intensity: 6,
-            context: "Phone and game distractions",
+            context: "เสียสมาธิจากโทรศัพท์และเกม",
           },
         ],
       });
@@ -120,11 +112,15 @@ async function main() {
         },
       });
 
-      console.log("✅ Created sample data for Alex");
+      console.log("✅ Created sample data for demo student");
     }
   }
 
-  console.log("🎉 Database seed completed!");
+  console.log("\n🎉 Database seed completed!");
+  console.log("\n📝 Demo Accounts:");
+  console.log("   Admin:   admin@demo.com    (password: demo123)");
+  console.log("   Student: student@demo.com  (password: demo123)");
+  console.log("\n💡 Use these accounts to test the system!\n");
 }
 
 main()

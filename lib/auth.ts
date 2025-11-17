@@ -36,7 +36,6 @@ export async function getUserFromToken(token: string): Promise<AuthUser | null> 
     where: { id: payload.userId },
     include: {
       student: true,
-      teacher: true,
     },
   });
 
@@ -48,7 +47,6 @@ export async function getUserFromToken(token: string): Promise<AuthUser | null> 
     name: user.name,
     role: user.role,
     studentId: user.student?.id,
-    teacherId: user.teacher?.id,
   };
 }
 

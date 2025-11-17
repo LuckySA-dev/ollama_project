@@ -1,4 +1,5 @@
 import type { OllamaMessage } from "./ollamaClient";
+import { getThaiSystemPrompt, buildThaiChatMessages, getThaiReportPrompt } from "./thaiPrompts";
 
 export const SYSTEM_PROMPT = `You are StudyBuddy, an AI mentor for junior high school students (ages 12-15).
 
@@ -43,12 +44,18 @@ Remember: You're here to support, not to judge. Every student learns differently
 
 export function buildChatMessages(
   conversationHistory: Array<{ role: "user" | "assistant"; content: string }>,
-  newUserMessage: string
+  newUserMessage: string,
+  options?: { language?: "en" | "th"; gradeLevel?: number }
 ): OllamaMessage[] {
+  // Use Thai prompt if language is Thai
+  const systemPrompt = options?.language === "th" && options?.gradeLevel
+    ? getThaiSystemPrompt(options.gradeLevel)
+    : SYSTEM_PROMPT;
+
   const messages: OllamaMessage[] = [
     {
       role: "system",
-      content: SYSTEM_PROMPT,
+      content: systemPrompt,
     },
   ];
 
@@ -69,11 +76,18 @@ export function buildChatMessages(
   return messages;
 }
 
-export function extractBehaviorTags(userMessage: string, aiResponse: string): string[] {
+export function extractBehaviorTags(userMessage: string, aiResponse: string, language?: "en" | "th"): string[] {
   const tags: string[] = [];
   const combined = (userMessage + " " + aiResponse).toLowerCase();
 
-  const behaviorKeywords = {
+  const behaviorKeywords = language === "th" ? {
+    focus: ["สมาธิ", "จดจ่อ", "ไม่มีสมาธิ", "ไม่ตั้งใจ", "ฟุ้งซ่าน"],
+    procrastination: ["ผัดวันประกันพรุ่ง", "ทำช้า", "ไม่ทำ", "เลื่อน"],
+    stress: ["เครียด", "กังวล", "กดดัน", "วิตกกังวล", "ตึงเครียด"],
+    motivation: ["แรงจูงใจ", "ไม่อยากทำ", "เบื่อ", "ไม่สนใจ", "ท้อแท้"],
+    study_time: ["เวลา", "ตาราง", "จัดการ", "วางแผน", "จัดสรร"],
+    burnout: ["เหนื่อย", "หมดไฟ", "อ่อนล้า", "ล้า", "เบิร์นเอาท์"],
+  } : {
     focus: ["focus", "concentrate", "distract", "attention", "mind wander"],
     procrastination: ["procrastinat", "delay", "put off", "avoid", "later"],
     stress: ["stress", "anxious", "worry", "overwhelm", "pressure", "nervous"],
@@ -102,8 +116,15 @@ export function generateReportPrompt(
       stress: number;
       consistency: number;
     };
-  }
+  },
+  options?: { language?: "en" | "th"; gradeLevel?: number }
 ): string {
+  // Use Thai prompt if language is Thai
+  if (options?.language === "th" && options?.gradeLevel) {
+    return getThaiReportPrompt(studentName, options.gradeLevel, weekData);
+  }
+  
+  // Default English prompt
   return `Generate a brief weekly study behavior report for ${studentName}, a junior high school student.
 
 DATA:

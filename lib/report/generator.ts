@@ -68,7 +68,7 @@ export async function generateWeeklyReport(studentId: string): Promise<ReportCon
     throw new Error("Student not found");
   }
 
-  // Generate AI insights
+  // Generate AI insights with Thai language support
   const aiPrompt = generateReportPrompt(student.user.name, {
     totalSessions: sessions.length,
     behaviors: behaviors.map((b: any) => ({
@@ -82,18 +82,52 @@ export async function generateWeeklyReport(studentId: string): Promise<ReportCon
       stress: currentScore?.stressLevel || 50,
       consistency: currentScore?.consistencyScore || 50,
     },
+  }, {
+    language: "th", // Use Thai language
+    gradeLevel: student.gradeLevel,
   });
 
-  let aiInsights;
+  interface AIInsights {
+    summary: string;
+    recommendations: string[];
+    highlight: string;
+    concerns: string[];
+  }
+
+  let aiInsights: AIInsights;
   try {
-    const response = await ollamaClient.generate(aiPrompt);
-    aiInsights = JSON.parse(response);
+    const response = await ollamaClient.generate(aiPrompt, { format: "json" });
+    
+    // Try to extract JSON from markdown code blocks if present
+    let jsonString = response.trim();
+    const jsonMatch = jsonString.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+    if (jsonMatch) {
+      jsonString = jsonMatch[1];
+    } else if (jsonString.startsWith('```')) {
+      // Remove markdown code blocks
+      jsonString = jsonString.replace(/```(?:json)?\s*/g, '').replace(/```\s*$/g, '');
+    }
+    
+    // Try to find JSON object in the response
+    const jsonObjectMatch = jsonString.match(/\{[\s\S]*\}/);
+    if (jsonObjectMatch) {
+      jsonString = jsonObjectMatch[0];
+    }
+    
+    aiInsights = JSON.parse(jsonString) as AIInsights;
   } catch (error) {
     console.error("Failed to generate AI insights:", error);
+    console.error("Response was:", await ollamaClient.generate(aiPrompt).catch(() => "N/A"));
+    
+    // Thai fallback messages
     aiInsights = {
-      summary: "Unable to generate AI summary this week.",
-      recommendations: ["Continue engaging with your study sessions."],
-      highlight: "Keep up the good work!",
+      summary: "ไม่สามารถสร้างรายงานอัตโนมัติได้ในขณะนี้ แต่คุณกำลังทำได้ดีแล้ว! ลองพูดคุยกับ AI Mentor บ่อยๆ เพื่อติดตามความก้าวหน้าของคุณ",
+      recommendations: [
+        "พูดคุยกับ AI Mentor อย่างสม่ำเสมอ",
+        "ตั้งเป้าหมายการเรียนที่ชัดเจน",
+        "จัดการเวลาให้มีประสิทธิภาพ"
+      ],
+      highlight: "คุณกำลังใช้ระบบเพื่อพัฒนาตนเอง ซึ่งเป็นสิ่งที่ดีมาก!",
       concerns: [],
     };
   }
