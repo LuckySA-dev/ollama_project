@@ -6,6 +6,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)](https://www.prisma.io/)
 [![Ollama](https://img.shields.io/badge/Ollama-LLM-green)](https://ollama.ai/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 ---
 
@@ -36,23 +38,47 @@ StudyBuddy is an AI-powered web application that helps students improve their st
 
 ### Installation
 
+#### Option 1: Quick Setup (Recommended)
+
 ```bash
-# 1. Install dependencies
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/ollama_project.git
+cd ollama_project
+
+# Run setup script
+# For Windows (PowerShell):
+.\setup.ps1
+
+# For Linux/Mac:
+chmod +x setup.sh
+./setup.sh
+
+# Then follow the on-screen instructions
+```
+
+#### Option 2: Manual Setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/ollama_project.git
+cd ollama_project
+
+# 2. Install dependencies
 npm install
 
-# 2. Setup environment
+# 3. Setup environment
 cp .env.example .env
 # Edit .env with your database credentials
 
-# 3. Setup Ollama
+# 4. Setup Ollama
 ollama pull llama3.1:8b
 
-# 4. Initialize database
+# 5. Initialize database
 npm run db:generate
 npm run db:push
 npm run db:seed
 
-# 5. Start development server
+# 6. Start development server
 npm run dev
 ```
 
@@ -129,15 +155,19 @@ node scripts\test-features.js  # Feature test (Node)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [DOCUMENTATION.md#contributing](./DOCUMENTATION.md#contributing) for guidelines.
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 
-### Quick Guidelines
+### Quick Start
 
 1. Fork the repository
-2. Create feature branch (`feature/your-feature`)
-3. Make your changes
-4. Test thoroughly
-5. Submit pull request
+2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/ollama_project.git`
+3. Create feature branch: `git checkout -b feature/your-feature`
+4. Make your changes and test thoroughly
+5. Commit: `git commit -m "feat: your feature description"`
+6. Push: `git push origin feature/your-feature`
+7. Submit a pull request
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guidelines, code style, and testing requirements.
 
 ---
 
@@ -186,9 +216,22 @@ See [DOCUMENTATION.md#troubleshooting](./DOCUMENTATION.md#troubleshooting) for m
 
 ---
 
-## 📄 License
+## � Repository Files
 
-MIT License - See LICENSE file for details
+- **[README.md](./README.md)** - This file, project overview and quick start
+- **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Complete technical documentation
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
+- **[CHANGELOG.md](./CHANGELOG.md)** - Version history and changes
+- **[LICENSE](./LICENSE)** - MIT License details
+- **[.env.example](./.env.example)** - Environment variables template
+- **[setup.ps1](./setup.ps1)** - Windows setup script
+- **[setup.sh](./setup.sh)** - Linux/Mac setup script
+
+---
+
+## �📄 License
+
+MIT License - See [LICENSE](./LICENSE) file for details
 
 ---
 
