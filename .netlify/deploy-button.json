@@ -1,0 +1,43 @@
+{
+  "name": "StudyBuddy - AI Study Assistant",
+  "description": "AI-Powered Study Assistant for Junior High & High School Students",
+  "repository": "https://github.com/YOUR_USERNAME/ollama_project",
+  "logo": "https://raw.githubusercontent.com/YOUR_USERNAME/ollama_project/main/public/logo.png",
+  "keywords": [
+    "nextjs",
+    "ai",
+    "education",
+    "study-assistant",
+    "ollama",
+    "openai",
+    "postgresql"
+  ],
+  "success_url": "/",
+  "env": {
+    "DATABASE_URL": {
+      "description": "PostgreSQL connection string (get from Supabase or Neon)",
+      "required": true
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT authentication (generate with: openssl rand -base64 32)",
+      "required": true
+    },
+    "OPENAI_API_KEY": {
+      "description": "OpenAI API key for LLM functionality (get from platform.openai.com)",
+      "required": false
+    },
+    "OPENAI_MODEL": {
+      "description": "OpenAI model to use (default: gpt-3.5-turbo)",
+      "value": "gpt-3.5-turbo",
+      "required": false
+    },
+    "NEXT_PUBLIC_APP_URL": {
+      "description": "Your Netlify site URL (will be auto-filled after deployment)",
+      "required": false
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "publish": ".next"
+  }
+}

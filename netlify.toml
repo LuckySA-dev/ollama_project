@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Redirect all requests to Next.js
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+# Environment variables (set these in Netlify dashboard)
+# DATABASE_URL - PostgreSQL connection string
+# JWT_SECRET - Your JWT secret key
+# OLLAMA_BASE_URL - Ollama URL or alternative LLM API
+# OLLAMA_MODEL - Model name
+# NEXT_PUBLIC_APP_URL - Your Netlify site URL

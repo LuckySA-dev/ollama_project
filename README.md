@@ -171,6 +171,25 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guidelines, code style, an
 
 ---
 
+## 🚀 Deployment
+
+### Deploy to Netlify
+
+This project is ready for deployment on Netlify. See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+
+**Quick Deploy:**
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy)
+
+**Requirements for Cloud Deployment:**
+- PostgreSQL database (Supabase, Neon, or Railway)
+- OpenAI API key (for LLM functionality)
+- Environment variables configured
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide in Thai.
+
+---
+
 ## 🧪 Testing
 
 ### Manual Testing
@@ -204,6 +223,9 @@ sudo systemctl status postgresql
 ```bash
 # Check Ollama status
 curl http://localhost:11434/api/tags
+
+# If you get registry errors when pulling models, wait a few minutes and retry
+# Ollama registry occasionally has temporary outages
 ```
 
 **Port Already in Use**
@@ -216,20 +238,23 @@ See [DOCUMENTATION.md#troubleshooting](./DOCUMENTATION.md#troubleshooting) for m
 
 ---
 
-## � Repository Files
+## 📂 Repository Files
 
 - **[README.md](./README.md)** - This file, project overview and quick start
 - **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Complete technical documentation
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history and changes
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Netlify deployment guide (Thai)
+- **[NETLIFY_QUICKSTART.md](./NETLIFY_QUICKSTART.md)** - Quick start for Netlify (Thai)
 - **[LICENSE](./LICENSE)** - MIT License details
 - **[.env.example](./.env.example)** - Environment variables template
+- **[netlify.toml](./netlify.toml)** - Netlify configuration
 - **[setup.ps1](./setup.ps1)** - Windows setup script
 - **[setup.sh](./setup.sh)** - Linux/Mac setup script
 
 ---
 
-## �📄 License
+## �� License
 
 MIT License - See [LICENSE](./LICENSE) file for details
 
