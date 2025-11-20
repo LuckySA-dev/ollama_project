@@ -83,7 +83,7 @@ export async function generateWeeklyReport(studentId: string): Promise<ReportCon
       consistency: currentScore?.consistencyScore || 50,
     },
   }, {
-    language: "en", // Use English language
+    language: "th", // Use Thai language
     gradeLevel: student.gradeLevel,
   });
 
@@ -119,15 +119,15 @@ export async function generateWeeklyReport(studentId: string): Promise<ReportCon
     console.error("Failed to generate AI insights:", error);
     console.error("Response was:", await ollamaClient.generate(aiPrompt).catch(() => "N/A"));
     
-    // English fallback messages
+    // Thai fallback messages
     aiInsights = {
-      summary: "Unable to generate automated report at this time, but you're doing great! Try chatting with AI Mentor regularly to track your progress.",
+      summary: "ไม่สามารถสร้างรายงานอัตโนมัติได้ในขณะนี้ แต่เธอทำได้ดีมาก! ลองคุยกับ AI Mentor เป็นประจำเพื่อติดตามความก้าวหน้าของเธอนะ",
       recommendations: [
-        "Chat with AI Mentor regularly",
-        "Set clear learning goals",
-        "Manage your time effectively"
+        "คุยกับ AI Mentor อย่างสม่ำเสมอ",
+        "ตั้งเป้าหมายการเรียนที่ชัดเจน",
+        "จัดการเวลาอย่างมีประสิทธิภาพ"
       ],
-      highlight: "You're using the system to improve yourself, which is excellent!",
+      highlight: "เธอใช้ระบบเพื่อพัฒนาตัวเอง ซึ่งเป็นสิ่งที่ยอดเยี่ยมมาก!",
       concerns: [],
     };
   }
@@ -205,13 +205,13 @@ export async function generateMonthlyReport(studentId: string): Promise<ReportCo
   const highlights: string[] = [];
   const concerns: string[] = [];
 
-  if (avgFocus >= 70) highlights.push("Strong focus and concentration this month");
-  if (avgMotivation >= 70) highlights.push("High motivation levels maintained");
-  if (sessions.length >= 12) highlights.push(`Consistent engagement with ${sessions.length} sessions`);
+  if (avgFocus >= 70) highlights.push("มีสมาธิและความตั้งใจสูงในเดือนนี้");
+  if (avgMotivation >= 70) highlights.push("รักษาระดับแรงจูงใจได้ดี");
+  if (sessions.length >= 12) highlights.push(`มีความสม่ำเสมอดีมาก มี ${sessions.length} ครั้งในเดือนนี้`);
 
-  if (avgStress >= 70) concerns.push("Elevated stress levels detected");
-  if (avgFocus < 50) concerns.push("Focus challenges need attention");
-  if (sessions.length < 4) concerns.push("Low engagement - consider more regular check-ins");
+  if (avgStress >= 70) concerns.push("ตรวจพบระดับความเครียดที่สูง");
+  if (avgFocus < 50) concerns.push("ปัญหาด้านสมาธิต้องการความใส่ใจ");
+  if (sessions.length < 4) concerns.push("การใช้งานน้อย - ควรเพิ่มการติดตามอย่างสม่ำเสมอ");
 
   const behaviorTrends: BehaviorTrend[] = Object.values(BehaviorType).map((type) => {
     const typeBehaviors = behaviors.filter((b: any) => b.behaviorType === type);
@@ -227,7 +227,7 @@ export async function generateMonthlyReport(studentId: string): Promise<ReportCo
   });
 
   return {
-    summary: `This month, you had ${sessions.length} study sessions. Your average focus score was ${Math.round(avgFocus)}/100, and motivation was ${Math.round(avgMotivation)}/100.`,
+    summary: `เดือนนี้เธอมี ${sessions.length} ครั้งที่พูดคุย คะแนนสมาธิเฉลี่ย ${Math.round(avgFocus)}/100 และแรงจูงใจ ${Math.round(avgMotivation)}/100`,
     metrics: {
       totalChatSessions: sessions.length,
       averageSessionDuration: 0,

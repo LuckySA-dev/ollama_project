@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       }
     } catch (error) {
       console.error("LLM error:", error);
-      aiResponse = "I'm having trouble right now. Could you try asking that again? 😊";
+      aiResponse = "ฉันมีปัญหาตอนนี้นะ ลองถามใหม่อีกครั้งได้ไหมคะ? 😊";
     }
 
     // Extract behavior tags with Thai language support

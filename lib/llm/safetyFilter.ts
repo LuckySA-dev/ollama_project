@@ -1,31 +1,43 @@
 // Content safety filter for age-appropriate interactions
 
 const BLOCKED_KEYWORDS = [
-  // Explicit content
+  // Explicit content (English)
   "sex", "porn", "nude", "explicit",
-  // Violence
+  // Explicit content (Thai)
+  "เซ็กส์", "โป๊", "ลามก", "หนังโป๊",
+  // Violence (English)
   "kill", "murder", "suicide", "self-harm", "hurt myself",
-  // Drugs/Alcohol
+  // Violence (Thai)
+  "ฆ่า", "ฆาตกรรม", "ฆ่าตัวตาย", "ทำร้ายตัวเอง",
+  // Drugs/Alcohol (English)
   "drug", "cocaine", "marijuana", "alcohol", "drunk", "high",
-  // Inappropriate
+  // Drugs/Alcohol (Thai)
+  "ยาเสพติด", "โคเคน", "กัญชา", "เหล้า", "เมา", "ไอซ์", "ยาบ้า",
+  // Inappropriate (English)
   "hate", "racist", "discrimination",
+  // Inappropriate (Thai)
+  "เกลียด", "เหยียดเชื้อชาติ", "เลือกปฏิบัติ", "ด่า", "สบประมาท",
 ];
 
 const CRISIS_KEYWORDS = [
+  // English
   "kill myself", "want to die", "suicide", "self-harm", "hurt myself",
   "end my life", "don't want to live", "cutting myself",
+  // Thai
+  "ฆ่าตัวตาย", "อยากตาย", "ไม่อยากมีชีวิต", "ทำร้ายตัวเอง", 
+  "จบชีวิต", "ไม่อยากอยู่", "เบื่อชีวิต", "หมดหวัง",
 ];
 
-const CRISIS_RESPONSE = `I'm really concerned about what you're sharing. These feelings are serious, and it's important to talk to someone who can help right away.
+const CRISIS_RESPONSE = `ฉันเป็นห่วงเรื่องที่เธอแบ่งปันมากนะ ความรู้สึกเหล่านี้เป็นเรื่องจริงจังมาก และสำคัญมากที่ต้องพูดคุยกับคนที่สามารถช่วยเหลือได้ทันที
 
-Please reach out to:
-- A trusted adult (parent, teacher, school counselor)
-- National Suicide Prevention Lifeline: 988 (US)
-- Crisis Text Line: Text HOME to 741741
+กรุณาติดต่อ:
+- ผู้ใหญ่ที่ไว้ใจได้ (พ่อแม่, ครู, ที่ปรึกษาโรงเรียน)
+- สายด่วนสุขภาพจิต กรมสุขภาพจิต: 1323
+- สายด่วนกระทรวงสาธารณสุข: 1422
 
-You matter, and there are people who want to help you. Please don't face this alone. 💙`;
+เธอมีคุณค่า และมีคนที่อยากช่วยเหลือเธอ อย่าเผชิญกับเรื่องนี้คนเดียวนะ 💙`;
 
-const OFF_TOPIC_RESPONSE = `Hey! I'm here to help with studying and school-related topics. Let's focus on how I can support your learning. What's something about school or studying you'd like to talk about? 📚`;
+const OFF_TOPIC_RESPONSE = `สวัสดี! ฉันอยู่ที่นี่เพื่อช่วยเรื่องการเรียนและโรงเรียนนะ มาโฟกัสที่เรื่องที่ฉันสามารถช่วยเธอได้กันดีกว่า มีอะไรเกี่ยวกับการเรียนที่อยากคุยกันบ้างคะ? 📚`;
 
 export interface SafetyCheckResult {
   isSafe: boolean;
@@ -63,7 +75,7 @@ export function checkInputSafety(input: string): SafetyCheckResult {
     return {
       isSafe: false,
       reason: "off_topic",
-      suggestedResponse: "Could you tell me a bit more? I'm here to help with your studying! 😊",
+      suggestedResponse: "ช่วยบอกเพิ่มเติมหน่อยได้ไหมคะ? ฉันอยู่ที่นี่เพื่อช่วยเรื่องการเรียนของเธอนะ! 😊",
     };
   }
 
@@ -99,5 +111,5 @@ export function checkOutputSafety(output: string): boolean {
 }
 
 export function getFallbackResponse(): string {
-  return `I'm having trouble understanding that right now. Could you rephrase your question about studying or school? I'm here to help! 📚`;
+  return `ฉันมีปัญหาในการเข้าใจตอนนี้นะ ช่วยถามใหม่เกี่ยวกับการเรียนหรือโรงเรียนได้ไหมคะ? ฉันพร้อมช่วยเหลือเสมอ! 📚`;
 }
