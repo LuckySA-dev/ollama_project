@@ -14,6 +14,26 @@ Before you begin, ensure you have:
 
 ### Setting Up Development Environment
 
+> **📖 New to this project?** Read [SETUP.md](./SETUP.md) for detailed setup instructions in Thai.
+
+#### Quick Setup (Recommended)
+
+```bash
+# 1. Fork and Clone
+git clone https://github.com/YOUR_USERNAME/ollama_project.git
+cd ollama_project
+
+# 2. Run setup script
+# Windows (PowerShell):
+.\setup.ps1
+
+# Linux/Mac:
+chmod +x setup.sh
+./setup.sh
+```
+
+#### Manual Setup
+
 1. **Fork and Clone**
    ```bash
    git clone https://github.com/YOUR_USERNAME/ollama_project.git

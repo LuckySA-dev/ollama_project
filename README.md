@@ -9,6 +9,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
+> **📥 Just cloned this project?** → Read [CLONE_GUIDE.md](./CLONE_GUIDE.md) or [SETUP.md](./SETUP.md) (Thai)  
+> **🇹🇭 อ่านภาษาไทย?** → [README.th.md](./README.th.md)
+
 ---
 
 ## 🎯 Overview
@@ -38,14 +41,16 @@ StudyBuddy is an AI-powered web application that helps students improve their st
 
 ### Installation
 
+> **📖 สำหรับคนที่ clone มา**: อ่านคู่มือติดตั้งแบบละเอียดที่ [SETUP.md](./SETUP.md)
+
 #### Option 1: Quick Setup (Recommended)
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/YOUR_USERNAME/ollama_project.git
 cd ollama_project
 
-# Run setup script
+# 2. Run setup script
 # For Windows (PowerShell):
 .\setup.ps1
 
@@ -53,8 +58,15 @@ cd ollama_project
 chmod +x setup.sh
 ./setup.sh
 
-# Then follow the on-screen instructions
+# 3. Follow the on-screen instructions
 ```
+
+The setup script will automatically:
+- Install dependencies
+- Setup environment variables
+- Pull Ollama model
+- Initialize database
+- Seed demo data
 
 #### Option 2: Manual Setup
 
@@ -83,6 +95,8 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
+
+> **⚠️ Important**: Make sure PostgreSQL and Ollama are running before starting the app
 
 ### Demo Accounts
 
@@ -123,11 +137,11 @@ For complete documentation, see [DOCUMENTATION.md](./DOCUMENTATION.md)
 
 ### Quick Links
 
-- **Setup Guide**: See [Installation](#installation) above
-- **API Documentation**: [DOCUMENTATION.md#api-documentation](./DOCUMENTATION.md#api-documentation)
-- **Development Guide**: [DOCUMENTATION.md#development-guide](./DOCUMENTATION.md#development-guide)
-- **Testing**: [docs/testing/](./docs/testing/)
-- **Features**: [docs/features/](./docs/features/)
+- **🚀 Setup Guide (สำหรับคนที่ clone มา)**: [SETUP.md](./SETUP.md) - คู่มือติดตั้งแบบละเอียด
+- **📖 API Documentation**: [DOCUMENTATION.md#api-documentation](./DOCUMENTATION.md#api-documentation)
+- **💻 Development Guide**: [DOCUMENTATION.md#development-guide](./DOCUMENTATION.md#development-guide)
+- **🧪 Testing**: [docs/testing/](./docs/testing/)
+- **✨ Features**: [docs/features/](./docs/features/)
 
 ---
 
@@ -240,17 +254,27 @@ See [DOCUMENTATION.md#troubleshooting](./DOCUMENTATION.md#troubleshooting) for m
 
 ## 📂 Repository Files
 
-- **[README.md](./README.md)** - This file, project overview and quick start
+### 📖 Documentation
+- **[README.md](./README.md)** - This file, project overview (English)
+- **[README.th.md](./README.th.md)** - 🆕 Project overview (Thai)
+- **[CLONE_GUIDE.md](./CLONE_GUIDE.md)** - 🆕 Quick guide for cloned projects (Thai)
+- **[SETUP.md](./SETUP.md)** - 🆕 Detailed setup guide (Thai)
 - **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Complete technical documentation
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history and changes
+
+### 🚀 Deployment
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Netlify deployment guide (Thai)
 - **[NETLIFY_QUICKSTART.md](./NETLIFY_QUICKSTART.md)** - Quick start for Netlify (Thai)
-- **[LICENSE](./LICENSE)** - MIT License details
-- **[.env.example](./.env.example)** - Environment variables template
 - **[netlify.toml](./netlify.toml)** - Netlify configuration
+
+### ⚙️ Configuration
+- **[.env.example](./.env.example)** - Environment variables template
 - **[setup.ps1](./setup.ps1)** - Windows setup script
 - **[setup.sh](./setup.sh)** - Linux/Mac setup script
+
+### 📄 Legal
+- **[LICENSE](./LICENSE)** - MIT License details
 
 ---
 
