@@ -8,7 +8,7 @@ import BehaviorChart from "@/components/dashboard/BehaviorChart";
 import StudentNavbar from "@/components/layout/StudentNavbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, TrendingUp, Award, Flame, FileText, ArrowRight, Sparkles, Brain, Target, Calendar } from "lucide-react";
+import { MessageSquare, TrendingUp, Award, Flame, FileText, ArrowRight, Sparkles, Brain, Target, Calendar, User, Mail, GraduationCap, Clock } from "lucide-react";
 import type { DashboardStats } from "@/types";
 
 export default function StudentDashboard() {
@@ -68,6 +68,66 @@ export default function StudentDashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* User Profile Card */}
+        {stats?.user && (
+          <Card className="mb-8 border-2 bg-gradient-to-br from-primary/5 via-background to-background">
+            <CardContent className="pt-6">
+              <div className="flex flex-col md:flex-row md:items-center gap-6">
+                {/* Avatar */}
+                <div className="flex-shrink-0">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                    <User className="h-10 w-10 md:h-12 md:w-12 text-white" />
+                  </div>
+                </div>
+                
+                {/* User Info */}
+                <div className="flex-1 space-y-3">
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-1">{stats.user.name}</h3>
+                    <p className="text-muted-foreground flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      {stats.user.email}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-3">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary">
+                      <GraduationCap className="h-4 w-4" />
+                      <span className="text-sm font-medium">
+                        {stats.user.gradeLevel <= 9 
+                          ? `มัธยมต้น ม.${stats.user.gradeLevel - 6}`
+                          : `มัธยมปลาย ม.${stats.user.gradeLevel - 6}`
+                        }
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      <span className="text-sm font-medium">
+                        สมาชิกตั้งแต่ {new Date(stats.user.memberSince).toLocaleDateString('th-TH', {
+                          year: 'numeric',
+                          month: 'short'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Stats Summary */}
+                <div className="flex md:flex-col gap-4 md:gap-2 md:items-end">
+                  <div className="text-center md:text-right">
+                    <div className="text-2xl font-bold text-primary">{stats.totalSessions}</div>
+                    <div className="text-xs text-muted-foreground">เซสชันทั้งหมด</div>
+                  </div>
+                  <div className="text-center md:text-right">
+                    <div className="text-2xl font-bold text-orange-500">{stats.streakDays}</div>
+                    <div className="text-xs text-muted-foreground">วันติดต่อกัน</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Welcome Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
@@ -76,7 +136,7 @@ export default function StudentDashboard() {
             </div>
             <div>
               <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                ยินดีต้อนรับกลับมา!
+                ยินดีต้อนรับกลับมา{stats?.user ? `, ${stats.user.name.split(' ')[0]}` : ''}!
               </h2>
               <p className="text-muted-foreground">พร้อมเรียนรู้และพัฒนาตัวเองวันนี้หรือยัง?</p>
             </div>

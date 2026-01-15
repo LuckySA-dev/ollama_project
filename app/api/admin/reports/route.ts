@@ -83,6 +83,76 @@ export async function GET(request: NextRequest) {
       })
     );
 
+    // Get behavior statistics grouped by type
+    const behaviorStats = await prisma.studyBehaviorLog.groupBy({
+      by: ["behaviorType"],
+      _count: {
+        id: true,
+      },
+      _avg: {
+        intensity: true,
+      },
+    });
+
+    const behaviorData = behaviorStats.map((stat: any) => ({
+      type: stat.behaviorType,
+      count: stat._count.id,
+      avgIntensity: Math.round(stat._avg.intensity * 10) / 10,
+    }));
+
+    // Get daily session activity for the last 7 days
+    const dailyActivity = [];
+    for (let i = 6; i >= 0; i--) {
+      const day = new Date();
+      day.setDate(day.getDate() - i);
+      day.setHours(0, 0, 0, 0);
+      
+      const nextDay = new Date(day);
+      nextDay.setDate(nextDay.getDate() + 1);
+      
+      const sessionCount = await prisma.chatSession.count({
+        where: {
+          startedAt: {
+            gte: day,
+            lt: nextDay,
+          },
+        },
+      });
+
+      const messageCount = await prisma.message.count({
+        where: {
+          timestamp: {
+            gte: day,
+            lt: nextDay,
+          },
+        },
+      });
+
+      dailyActivity.push({
+        date: day.toLocaleDateString('th-TH', { month: 'short', day: 'numeric' }),
+        sessions: sessionCount,
+        messages: messageCount,
+      });
+    }
+
+    // Get grade level distribution
+    const gradeLevelStats = await prisma.student.groupBy({
+      by: ["gradeLevel"],
+      _count: {
+        id: true,
+      },
+      orderBy: {
+        gradeLevel: "asc",
+      },
+    });
+
+    const gradeDistribution = gradeLevelStats.map((stat: any) => ({
+      grade: stat.gradeLevel <= 9 
+        ? `ม.${stat.gradeLevel - 6} (มัธยมต้น)`
+        : `ม.${stat.gradeLevel - 6} (มัธยมปลาย)`,
+      count: stat._count.id,
+    }));
+
     return NextResponse.json({
       success: true,
       data: {
@@ -98,6 +168,9 @@ export async function GET(request: NextRequest) {
           sessions: newSessionsThisWeek,
         },
         topStudents,
+        behaviorData,
+        dailyActivity,
+        gradeDistribution,
       },
     });
   } catch (error) {

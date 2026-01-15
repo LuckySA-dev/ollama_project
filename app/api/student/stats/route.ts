@@ -21,6 +21,21 @@ export async function GET(request: Request) {
       );
     }
 
+    // Get student profile with grade level
+    const student = await prisma.student.findUnique({
+      where: { id: user.studentId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
     const now = new Date();
     const weekStart = startOfWeek(now);
     const weekEnd = endOfWeek(now);
@@ -85,6 +100,15 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: {
+        user: student
+          ? {
+              id: student.user.id,
+              name: student.user.name,
+              email: student.user.email,
+              gradeLevel: student.gradeLevel,
+              memberSince: student.user.createdAt,
+            }
+          : null,
         totalSessions,
         weeklySessions,
         weeklyScore: weeklyScore

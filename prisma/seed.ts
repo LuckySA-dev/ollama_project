@@ -6,6 +6,23 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Starting database seed...");
 
+  // Clean up existing demo data
+  console.log("🧹 Cleaning up existing demo data...");
+  await prisma.message.deleteMany({});
+  await prisma.chatSession.deleteMany({});
+  await prisma.studyBehaviorLog.deleteMany({});
+  await prisma.behaviorScore.deleteMany({});
+  await prisma.reportHistory.deleteMany({});
+  await prisma.student.deleteMany({});
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        in: ["admin@demo.com", "student@demo.com", "student2@demo.com", "student3@demo.com"]
+      }
+    }
+  });
+  console.log("✅ Cleanup completed");
+
   // Create ADMIN demo user
   const adminPassword = await bcrypt.hash("demo123", 10);
   const adminUser = await prisma.user.create({

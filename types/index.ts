@@ -60,6 +60,13 @@ export interface BehaviorTrend {
 }
 
 export interface DashboardStats {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    gradeLevel: number;
+    memberSince: Date;
+  } | null;
   totalSessions: number;
   weeklySessions: number;
   weeklyScore: WeeklyScore | null;
